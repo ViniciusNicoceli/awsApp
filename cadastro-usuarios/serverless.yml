@@ -2,6 +2,25 @@ service: cadastro-usuarios
 
 plugins:
   - serverless-offline
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+    seed:
+      domain:
+        sources:
+          - table: PACIENTES
+            sources: [.offline/migrations/pacientes-seed.json]
 
 provider:
   name: aws
