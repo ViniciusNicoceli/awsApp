@@ -31,6 +31,8 @@ exports.handler = async (event) => {
             body: JSON.stringify(usuarioEncontrado),
         }
     };
+
+    console.log("test deploy")
     
     const todosUsuarios = usuarios.map(p =>({ ...p, idade: calcularIdade(p) }))
     return {
