@@ -17,7 +17,16 @@ module.exports.listarUsuarios = async (event) => {
       2
     ),
   };
+};
 
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
+module.exports.obterUsuarios = async (event) => {
+
+  const { usuarioId } = event.pathParameters;
+
+  const usuario = usuarios.find(usuario => usuario.id == usuarioId);
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify(usuario, null, 2),
+  };
 };

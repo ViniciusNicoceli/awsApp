@@ -17,3 +17,9 @@ functions:
       - http:
           path: usuarios
           method: get
+  obterUsuarios:
+    handler: handler.obterUsuarios
+    events:
+      - http:
+          path: usuarios/{usuarioId}
+          method: get
