@@ -6,6 +6,7 @@ const usuarios = [
 ];
 
 const AWS = require("aws-sdk");
+const DateFromTime = require("es-abstract/5/datefromtime");
 const { v4: uuidv4 } = require("uuid");
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
@@ -111,3 +112,57 @@ module.exports.cadastrarUsuario = async (event) => {
     };
   }
 };
+
+module.exports.atualizarUsuario = async (event) => {
+  const {usuarioId} = event.pathParameters
+
+  try {
+    const timestamp = new Date().getTime()
+
+    let dados = JSON.parse(event.body)
+
+    const { nome, data_nascimento, email, telefone} = dados
+
+    await dynamoDb
+    .update({
+      ... params,
+      Key: {
+        usuario_id: usuarioId
+      },
+      UpdateExpression:
+      'SET nome = :nome, data_nascimento = :dt, email = :email, telefone= :telefone, atualizado_em = :atualizado_em',
+      ConditionExpression: 'attribute_exists(usuario_id)',
+      ExpressionAttributeValues: {
+        ':nome': nome,
+        ':dt': data_nascimento,
+        ':email': email,
+        ':telefone': telefone,
+        ':atualizado_em': timestamp
+      }
+    })
+    .promise()
+    
+    return{
+      statusCode: 204,
+    };
+  } catch (err) {console.log("Error", err);
+
+    let error = err.name ? err.name : "Exception";
+    let message = err.message ? err.message : "Unknown error";
+    let statusCode = err.statusCode ? err.statusCode : 500;
+
+    if(error == 'ConditionalCheckFailedException') {
+      error = 'Paciente não existe';
+      message = 'Recurso com o ID ${pacienteId} não existe e não pode ser atualizado';
+      statusCode = 404;
+    }
+
+    return {
+      statusCode,
+      body: JSON.stringify({
+        error,
+        message
+      }),
+    };
+  }
+}

@@ -19,6 +19,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:DeleteItem
         - dynamodb:GetItem
+        - dynamodb:UpdateItem
       Resource: arn:aws:dynamodb:us-east-1:237387733543:table/USUARIOS
 
 functions:
@@ -42,6 +43,13 @@ functions:
       - http:
           path: usuario
           method: post
+
+  atualizarUsuario:
+    handler: handler.atualizarUsuario
+    events:
+      - http:
+          path: usuarios/{usuarioId}
+          method: put
 
 resources:
   Resources:
