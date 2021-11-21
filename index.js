@@ -6,8 +6,8 @@ const usuarios = [
     {id: 3, nome: "Jose", dataNascimento: '1959-07-15'}
 ];
 
-function buscarUsuario(campo, valor) {
-    return usuarios.find(usuario => usuario[campo] == valor);
+function buscarUsuario(id) {
+    return usuarios.find(usuario => usuario.id == id);
 }
 
 function calcularIdade(usuario) {
@@ -22,15 +22,19 @@ exports.handler = async (event) => {
 
     let usuarioEncontrado = usuarios
 
-    if (event.usuarioId) 
-      usuarioEncontrado = buscarUsuario('id', event.filtros.usuarioId)
-      usuarioEncontrado = calcularIdade(usuarioEncontrado)
-
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify(usuarioEncontrado),
+    if (event.usuarioId) {
+        usuarioEncontrado = buscarUsuario(event.usuarioId)
+        usuarioEncontrado = calcularIdade(usuarioEncontrado)
+        
+        return {
+            statusCode: 200,
+            body: JSON.stringify(usuarioEncontrado),
+        }
     };
     
     const todosUsuarios = usuarios.map(p =>({ ...p, idade: calcularIdade(p) }))
-    return response;
+    return {
+        statusCode: 200,
+        body: JSON.stringify(todosUsuarios)
+    };
 };
