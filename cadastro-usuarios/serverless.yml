@@ -26,3 +26,19 @@ functions:
       - http:
           path: usuarios/{usuarioId}
           method: get
+
+resources:
+  Resources:
+    UsuariosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+      TableName: USUARIOS
+      AttributeDefinitions:
+        - AttributeName: usuario_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: usuario_id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
