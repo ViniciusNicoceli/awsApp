@@ -87,7 +87,7 @@
           "ListarUsuariosLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/cadastro-usuarios-qa-listarUsuarios"
+              "LogGroupName": "/aws/lambda/cadastro-usuarios-dev-listarUsuarios"
             }
           },
           "IamRoleLambdaExecution": {
@@ -116,7 +116,7 @@
                       "-",
                       [
                         "cadastro-usuarios",
-                        "qa",
+                        "dev",
                         "lambda"
                       ]
                     ]
@@ -132,7 +132,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cadastro-usuarios-qa*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cadastro-usuarios-dev*:*"
                           }
                         ]
                       },
@@ -143,7 +143,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cadastro-usuarios-qa*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cadastro-usuarios-dev*:*:*"
                           }
                         ]
                       }
@@ -157,7 +157,7 @@
                   "-",
                   [
                     "cadastro-usuarios",
-                    "qa",
+                    "dev",
                     {
                       "Ref": "AWS::Region"
                     },
@@ -174,11 +174,11 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/cadastro-usuarios/qa/1637501067334-2021-11-21T13:24:27.334Z/cadastro-usuarios.zip"
+                "S3Key": "serverless/cadastro-usuarios/dev/1637505088317-2021-11-21T14:31:28.317Z/cadastro-usuarios.zip"
               },
               "Handler": "handler.listarUsuarios",
               "Runtime": "nodejs12.x",
-              "FunctionName": "cadastro-usuarios-qa-listarUsuarios",
+              "FunctionName": "cadastro-usuarios-dev-listarUsuarios",
               "MemorySize": 1024,
               "Timeout": 6,
               "Role": {
@@ -192,7 +192,7 @@
               "ListarUsuariosLogGroup"
             ]
           },
-          "ListarUsuariosLambdaVersionyUZ1ybmFTmQXnWJCJ1MZXc7Wi711uwTu7p6IyVpbz4": {
+          "ListarUsuariosLambdaVersioneyS5gRgHATZnxXKqbod3aNxMqP9xriezyE6YA8Tu4eM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
@@ -200,6 +200,128 @@
                 "Ref": "ListarUsuariosLambdaFunction"
               },
               "CodeSha256": "sZL3NK2iqKX4ooL8cZDL4CqT3Rz+wivT6eMLkmCSPrw="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-cadastro-usuarios",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceUsuarios": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "usuarios",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodUsuariosGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceUsuarios"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ListarUsuariosLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "ListarUsuariosLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1637505087176": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodUsuariosGet"
+            ]
+          },
+          "ListarUsuariosLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ListarUsuariosLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
             }
           }
         },
@@ -209,16 +331,42 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-cadastro-usuarios-qa-ServerlessDeploymentBucketName"
+              "Name": "sls-cadastro-usuarios-dev-ServerlessDeploymentBucketName"
             }
           },
           "ListarUsuariosLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ListarUsuariosLambdaVersionyUZ1ybmFTmQXnWJCJ1MZXc7Wi711uwTu7p6IyVpbz4"
+              "Ref": "ListarUsuariosLambdaVersioneyS5gRgHATZnxXKqbod3aNxMqP9xriezyE6YA8Tu4eM"
             },
             "Export": {
-              "Name": "sls-cadastro-usuarios-qa-ListarUsuariosLambdaFunctionQualifiedArn"
+              "Name": "sls-cadastro-usuarios-dev-ListarUsuariosLambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-cadastro-usuarios-dev-ServiceEndpoint"
             }
           }
         }
@@ -311,14 +459,22 @@
     "functions": {
       "listarUsuarios": {
         "handler": "handler.listarUsuarios",
-        "events": [],
-        "name": "cadastro-usuarios-qa-listarUsuarios",
+        "events": [
+          {
+            "http": {
+              "path": "usuarios",
+              "method": "get",
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "cadastro-usuarios-dev-listarUsuarios",
         "package": {},
         "memory": 1024,
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "ListarUsuariosLambdaVersionyUZ1ybmFTmQXnWJCJ1MZXc7Wi711uwTu7p6IyVpbz4"
+        "versionLogicalId": "ListarUsuariosLambdaVersioneyS5gRgHATZnxXKqbod3aNxMqP9xriezyE6YA8Tu4eM"
       }
     },
     "configValidationMode": "warn",
@@ -340,7 +496,7 @@
     "artifact": "E:\\GithubProjects\\awsApp\\cadastro-usuarios\\.serverless\\cadastro-usuarios.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/cadastro-usuarios/qa/1637501067334-2021-11-21T13:24:27.334Z",
+    "artifactDirectoryName": "serverless/cadastro-usuarios/dev/1637505088317-2021-11-21T14:31:28.317Z",
     "artifact": "cadastro-usuarios.zip"
   }
 }

@@ -13,3 +13,7 @@ provider:
 functions:
   listarUsuarios:
     handler: handler.listarUsuarios
+    events:
+      - http:
+          path: usuarios
+          method: get
