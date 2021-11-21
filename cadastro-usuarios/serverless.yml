@@ -3,15 +3,23 @@ service: cadastro-usuarios
 plugins:
   - serverless-offline
 
-frameworkVersion: '2'
-
 provider:
   name: aws
   runtime: nodejs12.x
-  lambdaHashingVersion: 20201221
 
+  # you can overwrite defaults here
   stage: dev
-  region: us-east-2
+  region: us-east-1
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+        - dynamodb:GetItem
+      Resource: arn:aws:dynamodb:us-east-1:237387733543:table/USUARIOS
 
 functions:
   listarUsuarios:
@@ -20,25 +28,33 @@ functions:
       - http:
           path: usuarios
           method: get
-  obterUsuario:
-    handler: handler.obterUsuario
+
+  obterUsuarios:
+    handler: handler.obterUsuarios
     events:
       - http:
           path: usuarios/{usuarioId}
           method: get
+
+  cadastrarUsuario:
+    handler: handler.cadastrarUsuario
+    events:
+      - http:
+          path: usuario
+          method: post
 
 resources:
   Resources:
     UsuariosTable:
       Type: AWS::DynamoDB::Table
       Properties:
-      TableName: USUARIOS
-      AttributeDefinitions:
-        - AttributeName: usuario_id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: usuario_id
-          KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+        TableName: USUARIOS
+        AttributeDefinitions:
+          - AttributeName: usuario_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: usuario_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
