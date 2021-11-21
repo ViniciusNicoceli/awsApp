@@ -74,7 +74,7 @@
     "ListarUsuariosLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/cadastro-usuarios-dev-listarUsuarios"
+        "LogGroupName": "/aws/lambda/cadastro-usuarios-qa-listarUsuarios"
       }
     },
     "IamRoleLambdaExecution": {
@@ -103,7 +103,7 @@
                 "-",
                 [
                   "cadastro-usuarios",
-                  "dev",
+                  "qa",
                   "lambda"
                 ]
               ]
@@ -119,7 +119,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cadastro-usuarios-dev*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cadastro-usuarios-qa*:*"
                     }
                   ]
                 },
@@ -130,7 +130,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cadastro-usuarios-dev*:*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cadastro-usuarios-qa*:*:*"
                     }
                   ]
                 }
@@ -144,7 +144,7 @@
             "-",
             [
               "cadastro-usuarios",
-              "dev",
+              "qa",
               {
                 "Ref": "AWS::Region"
               },
@@ -161,11 +161,11 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/cadastro-usuarios/dev/1637500793206-2021-11-21T13:19:53.206Z/cadastro-usuarios.zip"
+          "S3Key": "serverless/cadastro-usuarios/qa/1637501067334-2021-11-21T13:24:27.334Z/cadastro-usuarios.zip"
         },
         "Handler": "handler.listarUsuarios",
         "Runtime": "nodejs12.x",
-        "FunctionName": "cadastro-usuarios-dev-listarUsuarios",
+        "FunctionName": "cadastro-usuarios-qa-listarUsuarios",
         "MemorySize": 1024,
         "Timeout": 6,
         "Role": {
@@ -179,7 +179,7 @@
         "ListarUsuariosLogGroup"
       ]
     },
-    "ListarUsuariosLambdaVersioneyS5gRgHATZnxXKqbod3aNxMqP9xriezyE6YA8Tu4eM": {
+    "ListarUsuariosLambdaVersionyUZ1ybmFTmQXnWJCJ1MZXc7Wi711uwTu7p6IyVpbz4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -196,16 +196,16 @@
         "Ref": "ServerlessDeploymentBucket"
       },
       "Export": {
-        "Name": "sls-cadastro-usuarios-dev-ServerlessDeploymentBucketName"
+        "Name": "sls-cadastro-usuarios-qa-ServerlessDeploymentBucketName"
       }
     },
     "ListarUsuariosLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ListarUsuariosLambdaVersioneyS5gRgHATZnxXKqbod3aNxMqP9xriezyE6YA8Tu4eM"
+        "Ref": "ListarUsuariosLambdaVersionyUZ1ybmFTmQXnWJCJ1MZXc7Wi711uwTu7p6IyVpbz4"
       },
       "Export": {
-        "Name": "sls-cadastro-usuarios-dev-ListarUsuariosLambdaFunctionQualifiedArn"
+        "Name": "sls-cadastro-usuarios-qa-ListarUsuariosLambdaFunctionQualifiedArn"
       }
     }
   }
