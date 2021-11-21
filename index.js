@@ -22,7 +22,7 @@ exports.handler = async (event) => {
 
     let usuarioEncontrado = usuarios
 
-    if (event.pacienteId) 
+    if (event.usuarioId) 
       usuarioEncontrado = buscarUsuario('id', event.filtros.usuarioId)
       usuarioEncontrado = calcularIdade(usuarioEncontrado)
 
