@@ -1,5 +1,8 @@
 service: cadastro-usuarios
 
+plugins:
+  - serverless-offline
+
 frameworkVersion: '2'
 
 provider:
@@ -17,8 +20,8 @@ functions:
       - http:
           path: usuarios
           method: get
-  obterUsuarios:
-    handler: handler.obterUsuarios
+  obterUsuario:
+    handler: handler.obterUsuario
     events:
       - http:
           path: usuarios/{usuarioId}

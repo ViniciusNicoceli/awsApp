@@ -19,14 +19,21 @@ module.exports.listarUsuarios = async (event) => {
   };
 };
 
-module.exports.obterUsuarios = async (event) => {
+module.exports.obterUsuario = async (event) => {
 
   const { usuarioId } = event.pathParameters;
 
   const usuario = usuarios.find(usuario => usuario.id == usuarioId);
 
+  if(usuario === undefined){
+    return{
+      statusCode: 404,
+      body:JSON.stringify({error: 'Usuário não existe'},null,2)
+    }
+  };
+  
   return {
     statusCode: 200,
-    body: JSON.stringify(usuario, null, 2),
+    body: JSON.stringify({usuario}, null, 2),
   };
 };
