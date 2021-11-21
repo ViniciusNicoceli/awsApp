@@ -152,8 +152,48 @@ module.exports.atualizarUsuario = async (event) => {
     let statusCode = err.statusCode ? err.statusCode : 500;
 
     if(error == 'ConditionalCheckFailedException') {
-      error = 'Paciente não existe';
-      message = 'Recurso com o ID ${pacienteId} não existe e não pode ser atualizado';
+      error = 'Usuario não existe';
+      message = 'Recurso com o ID ${usuarioId} não existe e não pode ser atualizado';
+      statusCode = 404;
+    }
+
+    return {
+      statusCode,
+      body: JSON.stringify({
+        error,
+        message
+      }),
+    };
+  }
+}
+
+module.exports.excluirUsuario = async (event) => {
+  const {usuarioId} = event.pathParameters
+
+  try {
+
+    await dynamoDb
+    .delete({
+      ... params, 
+      Key: {
+        usuario_id: usuarioId
+      },
+      ConditionExpression: 'attribute_exists(usuario_id)'
+    })
+    .promise()
+    
+    return{
+      statusCode: 204,
+    };
+  } catch (err) {console.log("Error", err);
+
+    let error = err.name ? err.name : "Exception";
+    let message = err.message ? err.message : "Unknown error";
+    let statusCode = err.statusCode ? err.statusCode : 500;
+
+    if(error == 'ConditionalCheckFailedException') {
+      error = 'Usuario não existe';
+      message = 'Recurso com o ID ${usuarioId} não existe e não pode ser atualizado';
       statusCode = 404;
     }
 

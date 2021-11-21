@@ -51,6 +51,13 @@ functions:
           path: usuarios/{usuarioId}
           method: put
 
+  excluirUsuario:
+    handler: handler.excluirUsuario
+    events:
+      - http:
+          path: usuarios/{usuarioId}
+          method: delete
+
 resources:
   Resources:
     UsuariosTable:
