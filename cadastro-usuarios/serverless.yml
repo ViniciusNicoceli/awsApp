@@ -9,7 +9,7 @@ provider:
 
   # you can overwrite defaults here
   stage: dev
-  region: us-east-1
+  region: us-east-2
 
   iamRoleStatements:
     - Effect: Allow
